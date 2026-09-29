@@ -4,6 +4,8 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -14,6 +16,13 @@ if backend_path not in sys.path:
 
 from app.core.database import Base, get_db
 from app.main import app
+
+# Enable foreign keys for SQLite
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 # Isolated In-Memory SQLite Async Database for testing
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"

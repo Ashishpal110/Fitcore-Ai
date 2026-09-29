@@ -4,7 +4,8 @@
 | :--- | :--- | :--- |
 | **Phase 0** | **Project Foundation & Architecture Rules** | **COMPLETE** |
 | **Phase 1** | **Backend Foundation & Auth Layer** | **COMPLETE** |
-| Phase 2 | Database Schema & Migrations | NOT STARTED |
+| **Phase 2A** | **Core Workout Database Architecture** | **COMPLETE** |
+| Phase 2B | Exercise Taxonomy & Seed Data | NOT STARTED |
 | Phase 3 | Core REST APIs | NOT STARTED |
 | Phase 4 | Frontend Foundation & Layouts | NOT STARTED |
 | Phase 5 | Workout Logging & Execution Engine | NOT STARTED |
@@ -16,24 +17,20 @@
 
 ---
 
-## Phase 1 Notes (Backend Foundation & Authentication)
-* **Layered Architecture Implementation**:
-  - `API Route` (`app/api/v1/endpoints/auth.py`, `health.py`)
-  - `Pydantic Schemas` (`app/schemas/user.py`, `auth.py`)
-  - `Service Layer` (`app/services/auth_service.py`)
-  - `Repository Layer` (`app/repositories/user_repository.py`)
-  - `SQLAlchemy Model` (`app/models/user.py`)
-* **Security & Tokens**:
-  - Argon2id password hashing (`app/core/security.py`).
-  - JWT token generation, signature validation, and claims parsing (`app/core/security.py`).
-  - Reusable authentication dependency `get_current_user` in `app/api/deps.py`.
-* **API Endpoints**:
-  - `POST /api/v1/auth/register`: Creates user with email normalization and returns JWT token + sanitized user profile.
-  - `POST /api/v1/auth/login`: Authenticates credentials with generic unauthorized error on invalid email/password.
-  - `GET /api/v1/auth/me`: Retrieves current authenticated user context.
-  - `GET /api/v1/health`: Returns API health and live database connection status.
-* **Database & Migrations**:
-  - Configured Alembic with `20260928_0001_initial_users_table.py`.
-  - Offline PostgreSQL DDL SQL generation verified.
-* **Backend Automated Tests**:
-  - 25 automated tests across unit, integration, and API suites (`tests/backend/`) executed and 100% passing.
+## Phase 2A Notes (Core Workout Database Architecture)
+* **Core Relational Model**:
+  - `Exercise` (`exercises` table): Reusable master exercise definition supporting 8 controlled tracking modalities (`WEIGHT_REPS`, `REPS_ONLY`, `WEIGHTED_REPS`, `DURATION`, `DISTANCE_DURATION`, `DISTANCE`, `CALORIES_DURATION`, `INTERVAL`).
+  - `Workout` (`workouts` table): Training session instance linked to `users.id` with status tracking (`IN_PROGRESS`, `COMPLETED`, `CANCELLED`).
+  - `WorkoutExercise` (`workout_exercises` table): Ordered join entity linking workouts to exercises (`order_index >= 0`).
+  - `Set` (`sets` table): Granular set performance data supporting multi-modal tracking metrics (reps, weight in kg, duration, distance, calories), RPE/RIR intensity ratings, and warmup synchronization.
+* **Integrity & Constraints**:
+  - `uq_sets_workout_exercise_set_number` unique constraint on `(workout_exercise_id, set_number)`.
+  - Non-negative check constraints on `set_number`, `reps`, `weight`, `duration_seconds`, `distance`, `calories`, and `rir`.
+  - Range check constraint on `rpe` (`1.0 <= rpe <= 10.0`).
+  - Strict foreign key cascading from `User` ➔ `Workout` ➔ `WorkoutExercise` ➔ `Set`.
+  - Restricted deletion (`RESTRICT`) from `Exercise` ➔ `WorkoutExercise` to guarantee immutable historical training logs.
+* **Alembic Migration**:
+  - Created migration [`20260929_0002_core_workout_tables.py`](file:///C:/Users/ASHISH/.gemini/antigravity/scratch/FitCore/backend/alembic/versions/20260929_0002_core_workout_tables.py).
+  - Verified offline PostgreSQL DDL generation (`alembic upgrade head --sql`) without redundant PK indexes.
+* **Automated Tests**:
+  - 37 backend tests passing (including full multi-modal workout recording with calories/warmup sync, cascade deletions, and all Phase 1 auth tests).
