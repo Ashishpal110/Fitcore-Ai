@@ -56,3 +56,11 @@ class DistanceUnit(str, enum.Enum):
     KM = "KM"
     M = "M"
     MI = "MI"
+
+
+class DifficultyLevel(str, enum.Enum):
+    """Subjective exercise execution difficulty rating."""
+    BEGINNER = "BEGINNER"
+    INTERMEDIATE = "INTERMEDIATE"
+    ADVANCED = "ADVANCED"
+

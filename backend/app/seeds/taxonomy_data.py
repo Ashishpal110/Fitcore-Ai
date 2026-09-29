@@ -1,0 +1,85 @@
+"""Taxonomy reference data and exercise library definitions for FitCore."""
+
+CATEGORIES = [
+    {"name": "Chest", "description": "Upper body pushing movements targeting pectorals and anterior chain."},
+    {"name": "Back", "description": "Upper body pulling and posture movements targeting lats, traps, and spinal erectors."},
+    {"name": "Shoulders", "description": "Overhead pressing, raises, and scapular stabilization targeting deltoids."},
+    {"name": "Arms", "description": "Elbow flexion and extension targeting biceps, triceps, and forearms."},
+    {"name": "Legs", "description": "Lower body compound and isolation movements targeting quads, hamstrings, glutes, and calves."},
+    {"name": "Core", "description": "Abdominal, rotational, and anti-extension stabilization exercises."},
+    {"name": "Cardio & Conditioning", "description": "Aerobic, anaerobic, and cardiovascular endurance exercises."},
+    {"name": "Olympic Weightlifting", "description": "Dynamic, explosive barbell movements (snatch, clean, jerk)."},
+    {"name": "Mobility & Flexibility", "description": "Joint articulation, myofascial release, and static/dynamic stretching."},
+    {"name": "Full Body & Functional", "description": "Multi-joint hybrid movements combining lower and upper body mechanics."},
+]
+
+MODALITIES = [
+    {"name": "Strength / Hypertrophy", "description": "Progressive resistance training focused on strength and muscle hypertrophy."},
+    {"name": "Calisthenics / Bodyweight", "description": "Gymnastic and bodyweight movement training using leverage and body control."},
+    {"name": "Cardio / Endurance", "description": "Sustained aerobic and cardiovascular conditioning."},
+    {"name": "HIIT / Conditioning", "description": "High-intensity interval training, circuits, and metabolic conditioning."},
+    {"name": "Mobility & Stretching", "description": "Joint mobility drills, flexibility, and active recovery routines."},
+    {"name": "Plyometrics", "description": "Explosive jump training and fast reactive power development."},
+    {"name": "Functional Training", "description": "Real-world movement patterns, carries, rotational power, and balance."},
+    {"name": "Powerlifting", "description": "Maximal strength development in squat, bench press, and deadlift."},
+    {"name": "Olympic Weightlifting", "description": "Technical explosive lifts (Snatch, Clean & Jerk) and assistance drills."},
+]
+
+EQUIPMENT = [
+    {"name": "Barbell", "description": "Standard Olympic barbell and weight plates."},
+    {"name": "Dumbbell", "description": "Handheld dumbbells (fixed or adjustable)."},
+    {"name": "Kettlebell", "description": "Cast iron or steel kettlebells with top handle."},
+    {"name": "Bodyweight / None", "description": "Requires zero external apparatus or weights."},
+    {"name": "Cable Machine", "description": "Adjustable pulley and cable resistance station."},
+    {"name": "Weight Machine", "description": "Plate-loaded or pin-selected selectorized machine."},
+    {"name": "Resistance Band", "description": "Elastic loop or tube bands for variable resistance."},
+    {"name": "Pull-Up Bar", "description": "Overhead bar for hanging and pull exercises."},
+    {"name": "Dip Station", "description": "Parallel bars for bodyweight dip and tuck movements."},
+    {"name": "Bench", "description": "Flat, incline, or adjustable weight bench."},
+    {"name": "Squat Rack", "description": "Power cage, half rack, or squat stands."},
+    {"name": "Treadmill", "description": "Motorized or manual running machine."},
+    {"name": "Stationary Bike", "description": "Upright, spin, or air assault stationary bicycle."},
+    {"name": "Rowing Machine", "description": "Indoor rowing ergometer."},
+    {"name": "Jump Rope", "description": "Speed or weighted jump rope."},
+    {"name": "Plyo Box", "description": "Wooden, foam, or metal platform for jumps and step-ups."},
+    {"name": "Medicine Ball", "description": "Weighted ball for throws, slams, and core work."},
+    {"name": "EZ Curl Bar", "description": "Cambered barbell for ergonomic wrist angle during arm training."},
+    {"name": "Suspension Trainer", "description": "Strap-based suspension system (e.g., TRX)."},
+    {"name": "Foam Roller", "description": "Cylindrical foam roller for self-myofascial release."},
+    {"name": "Sled / Prowler", "description": "Weighted push/pull turf sled."},
+    {"name": "Battle Ropes", "description": "Heavy anchored ropes for wave and slam conditioning."},
+]
+
+MUSCLES = [
+    {"name": "Pectoralis Major", "body_part": "Chest", "description": "Primary chest muscle responsible for horizontal adduction and shoulder flexion."},
+    {"name": "Pectoralis Minor", "body_part": "Chest", "description": "Underlying chest muscle responsible for scapular depression and stabilization."},
+    {"name": "Latissimus Dorsi", "body_part": "Back", "description": "Large back muscle responsible for shoulder extension and adduction (pulling down)."},
+    {"name": "Trapezius", "body_part": "Back", "description": "Upper back and neck diamond muscle responsible for scapular elevation, retraction, and depression."},
+    {"name": "Rhomboids", "body_part": "Back", "description": "Mid-back muscles responsible for scapular retraction (pinching shoulder blades)."},
+    {"name": "Erector Spinae", "body_part": "Back", "description": "Lower back spinal extensors stabilizing the vertebral column."},
+    {"name": "Anterior Deltoid", "body_part": "Shoulders", "description": "Front shoulder head active in pressing and arm elevation."},
+    {"name": "Lateral Deltoid", "body_part": "Shoulders", "description": "Side shoulder head responsible for arm abduction (raising to the side)."},
+    {"name": "Posterior Deltoid", "body_part": "Shoulders", "description": "Rear shoulder head responsible for horizontal shoulder abduction and posture."},
+    {"name": "Rotator Cuff", "body_part": "Shoulders", "description": "Supraspinatus, infraspinatus, teres minor, and subscapularis stabilizing the glenohumeral joint."},
+    {"name": "Biceps Brachii", "body_part": "Arms", "description": "Front upper arm muscle responsible for elbow flexion and forearm supination."},
+    {"name": "Brachialis & Forearms", "body_part": "Arms", "description": "Deep elbow flexor and forearm wrist flexors/extensors controlling grip."},
+    {"name": "Triceps Brachii", "body_part": "Arms", "description": "Back upper arm muscle (lateral, long, medial heads) extending the elbow."},
+    {"name": "Quadriceps", "body_part": "Legs", "description": "Front thigh muscles (rectus femoris, vastus lateralis/medialis/intermedius) extending the knee."},
+    {"name": "Hamstrings", "body_part": "Legs", "description": "Back thigh muscles (biceps femoris, semitendinosus, semimembranosus) flexing the knee and extending the hip."},
+    {"name": "Gluteus Maximus", "body_part": "Legs", "description": "Largest glute muscle responsible for hip extension and external rotation."},
+    {"name": "Gluteus Medius & Minimus", "body_part": "Legs", "description": "Lateral hip muscles responsible for hip abduction and pelvis stabilization."},
+    {"name": "Calves (Gastrocnemius & Soleus)", "body_part": "Legs", "description": "Lower leg muscles responsible for plantar flexion (ankle extension)."},
+    {"name": "Adductors & Abductors", "body_part": "Legs", "description": "Inner and outer hip muscles governing leg adduction and abduction."},
+    {"name": "Rectus Abdominis", "body_part": "Core", "description": "Six-pack abdominal muscle flexing the lumbar spine."},
+    {"name": "Obliques", "body_part": "Core", "description": "Internal and external oblique muscles governing trunk rotation and lateral flexion."},
+    {"name": "Transverse Abdominis", "body_part": "Core", "description": "Deepest core stabilizer providing intra-abdominal pressure and spinal support."},
+    {"name": "Cardiovascular System", "body_part": "Full Body", "description": "Heart, lungs, and whole-body metabolic conditioning engine."},
+]
+
+LOCATIONS = [
+    {"name": "Commercial Gym", "description": "Full-scale fitness center with comprehensive free weights, machines, and racks."},
+    {"name": "Home Gym", "description": "Home workout space with basic to intermediate equipment (dumbbells, bench, bands)."},
+    {"name": "Outdoors / Park", "description": "Open-air park, running track, calisthenics park, or trails."},
+    {"name": "Hotel / Travel", "description": "Minimalist travel space, hotel gym, or hotel room setup."},
+    {"name": "CrossFit / Studio", "description": "Functional box, gymnastics hall, or boutique training studio."},
+]

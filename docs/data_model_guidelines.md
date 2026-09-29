@@ -1,40 +1,83 @@
 # FitCore — Data Model & Exercise Modality Guidelines
 
 ## 1. Multi-Modal Exercise Tracking Principle
-A common flaw in workout trackers is assuming every exercise consists solely of `weight × reps`. FitCore supports a broad spectrum of training modalities.
+A common flaw in workout trackers is assuming every exercise consists solely of `weight × reps`. FitCore supports a broad spectrum of training modalities across gym, home, outdoor, bodyweight, cardio, functional training, and mobility.
 
 ### Modality Categories & Required Set Metrics:
 
 1. **Standard Strength & Hypertrophy** (Barbells, Dumbbells, Cables, Machines)
-   - Metrics: `weight_kg` (or `lbs`), `reps`, `rpe` (optional), `rest_seconds`
-2. **Bodyweight / Calisthenics** (Pushups, Pullups, Dips)
+   - Measurement: `ExerciseTrackingType.WEIGHT_REPS`
+   - Metrics: `weight` (kg/lbs), `reps`, `rpe` (optional 1.0–10.0), `rir` (optional)
+2. **Bodyweight / Calisthenics** (Pushups, Pullups, Dips, Bodyweight Squats)
+   - Measurement: `ExerciseTrackingType.REPS_ONLY`
    - Metrics: `reps`, `rpe` (optional)
 3. **Weighted Bodyweight** (Weighted Dips, Weighted Pullups)
-   - Metrics: `added_weight_kg`, `reps`, `rpe` (optional)
-4. **Distance & Duration Cardio** (Running, Outdoor Cycling, Rowing)
-   - Metrics: `distance_meters` (or `km`/`miles`), `duration_seconds`, `pace`, `heart_rate_avg` (optional)
-5. **Isometric Holds** (Plank, Wall Sit, L-Sit)
+   - Measurement: `ExerciseTrackingType.WEIGHTED_REPS`
+   - Metrics: `weight` (added load in kg/lbs), `reps`, `rpe` (optional)
+4. **Distance & Duration Cardio** (Running, Outdoor Cycling, Rowing Ergometer)
+   - Measurement: `ExerciseTrackingType.DISTANCE_DURATION`
+   - Metrics: `distance` (km/m/mi), `distance_unit`, `duration_seconds`
+5. **Distance Only** (Pure distance target tracking)
+   - Measurement: `ExerciseTrackingType.DISTANCE`
+   - Metrics: `distance`, `distance_unit`
+6. **Isometric Holds & Timed Static Exercises** (Plank, Wall Sit, L-Sit, Asian Squat)
+   - Measurement: `ExerciseTrackingType.DURATION`
    - Metrics: `duration_seconds`
-6. **HIIT & Circuit Intervals**
-   - Metrics: `rounds`, `work_duration_seconds`, `rest_duration_seconds`, `reps` (optional)
-7. **Lap Swimming**
-   - Metrics: `laps`, `pool_length_meters`, `duration_seconds`, `stroke_type`
+7. **Calorie & Duration Conditioning** (Air Assault Bike Sprints, SkiErg)
+   - Measurement: `ExerciseTrackingType.CALORIES_DURATION`
+   - Metrics: `calories`, `duration_seconds`
+8. **HIIT & Circuit Intervals**
+   - Measurement: `ExerciseTrackingType.INTERVAL`
+   - Metrics: high-level session intervals (detailed round modeling in future phase)
 
-## 2. Entity Relationship Overview (Target for Phase 2)
+---
+
+## 2. Exercise Taxonomy & Relational Architecture (Phase 2B)
+
+FitCore utilizes a normalized, extensible relational taxonomy structure:
 
 ```text
-users (id, email, hashed_password, full_name, created_at, ...)
-  │
-  ├── routines (id, user_id, name, is_archived, ...)
-  │     └── routine_exercises (id, routine_id, exercise_id, order, target_sets, ...)
-  │
-  ├── workouts (id, user_id, routine_id, start_time, end_time, status, notes, ...)
-  │     └── workout_exercises (id, workout_id, exercise_id, order, notes, ...)
-  │           └── exercise_sets (id, workout_exercise_id, set_number, set_type,
-  │                              weight, reps, distance, duration, rpe, is_completed, ...)
-  │
-  ├── body_measurements (id, user_id, logged_at, weight_kg, body_fat_pct, ...)
-  └── personal_records (id, user_id, exercise_id, record_type, value, achieved_at, ...)
+exercise_categories (id, name, description, created_at, updated_at)
+        │ 1:N
+        ▼
+    exercises (id, name, description, category_id, primary_muscle_id, difficulty, tracking_type, is_system, ...)
+        │
+        ├── M:N ──► training_modalities (id, name, description, ...)
+        │           via exercise_modalities (exercise_id, modality_id)
+        │
+        ├── M:N ──► equipment (id, name, description, ...)
+        │           via exercise_equipment (exercise_id, equipment_id)
+        │
+        ├── M:N ──► locations (id, name, description, ...)
+        │           via exercise_locations (exercise_id, location_id)
+        │
+        ├── 1:N ──► muscles (id, name, body_part, description, ...) [Primary Muscle]
+        │           via exercises.primary_muscle_id (SET NULL on delete)
+        │
+        └── M:N ──► muscles (id, name, body_part, description, ...) [Secondary Muscles]
+                    via exercise_secondary_muscles (exercise_id, muscle_id)
+```
 
-exercises (id, name, category, modality, primary_muscle, secondary_muscles, equipment, is_custom, created_by_user_id)
+### Taxonomy Entities:
+- **ExerciseCategory**: High-level grouping (e.g., Chest, Back, Shoulders, Arms, Legs, Core, Cardio & Conditioning, Olympic Weightlifting, Mobility & Flexibility, Full Body & Functional).
+- **TrainingModality**: Movement training style (e.g., Strength / Hypertrophy, Calisthenics / Bodyweight, Cardio / Endurance, HIIT / Conditioning, Mobility & Stretching, Plyometrics, Functional Training, Powerlifting, Olympic Weightlifting).
+- **Equipment**: Gear and apparatus requirements (e.g., Barbell, Dumbbell, Kettlebell, Bodyweight / None, Cable Machine, Weight Machine, Resistance Band, Pull-Up Bar, Dip Station, Bench, Squat Rack, Treadmill, Stationary Bike, Rowing Machine, Jump Rope, Plyo Box, Medicine Ball, EZ Curl Bar, Suspension Trainer, Foam Roller, Sled / Prowler, Battle Ropes).
+- **Muscle**: Anatomical target groups with body part mapping (e.g., Pectoralis Major, Latissimus Dorsi, Trapezius, Anterior Deltoid, Lateral Deltoid, Posterior Deltoid, Biceps Brachii, Triceps Brachii, Brachialis & Forearms, Quadriceps, Hamstrings, Gluteus Maximus, Calves, Rectus Abdominis, Obliques, Transverse Abdominis, Cardiovascular System).
+- **ExerciseLocation**: Environmental training contexts (e.g., Commercial Gym, Home Gym, Outdoors / Park, Hotel / Travel, CrossFit / Studio).
+- **DifficultyLevel**: Controlled rating (`BEGINNER`, `INTERMEDIATE`, `ADVANCED`).
+
+---
+
+## 3. Core Workout Tracking Relational Schema
+
+```text
+users (id, email, hashed_password, full_name, is_active, created_at, updated_at)
+  │
+  └── workouts (id, user_id, name, started_at, completed_at, status, notes, created_at, updated_at)
+        │
+        └── workout_exercises (id, workout_id, exercise_id, order_index, notes, created_at, updated_at)
+              │
+              └── sets (id, workout_exercise_id, set_number, set_type,
+                        reps, weight, duration_seconds, distance, distance_unit,
+                        calories, rpe, rir, is_warmup, notes, created_at)
 ```
